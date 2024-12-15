@@ -12,9 +12,12 @@ def extract_attributes(question, relevant_docs, response):
     formatted_documents = apply_sentence_keys_documents(relevant_docs)
     formatted_responses = apply_sentence_keys_response(response)
 
+    # Calculate the total number of sentences from formatted_documents
+    total_sentences = sum(len(doc) for doc in formatted_documents)
+
     attribute_prompt = create_prompt(formatted_documents, question, formatted_responses)
 
     # Instead of using BaseMessage, pass the formatted prompt directly to invoke
     result = llm.invoke(attribute_prompt)
 
-    return result
+    return result, total_sentences

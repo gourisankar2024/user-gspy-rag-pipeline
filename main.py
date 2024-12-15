@@ -46,11 +46,11 @@ def main():
     logging.info("Response generated")
 
     # Print the response
-    print(f"Response from LLM: {response}")
+    logging.info(f"Response from LLM: {response}")
     #print(f"Source Documents: {source_docs}")
 
     # Valuations : Extract attributes from the response and source documents
-    attributes = extract_attributes(sample_question, source_docs, response)
+    attributes, total_sentences = extract_attributes(sample_question, source_docs, response)
     
     # Only proceed if the content is not empty
     if attributes.content:
@@ -65,7 +65,7 @@ def main():
             print(json.dumps(result_json, indent=2))
 
             # Compute metrics using the extracted attributes
-            metrics = compute_metrics(result_json)
+            metrics = compute_metrics(result_json, total_sentences)
             print(metrics)
         except json.JSONDecodeError as e:
             logging.error(f"JSONDecodeError: {e}")
