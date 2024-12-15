@@ -34,8 +34,8 @@ def main():
     relevant_docs = retrieve_top_k_documents(vector_store, sample_question, top_k=5)
     logging.info(f"Relevant documents retrieved :{len(relevant_docs)}")
     # Log each retrieved document individually
-    for i, doc in enumerate(relevant_docs):
-        logging.info(f"Relevant document {i+1}: {doc} \n")
+    #for i, doc in enumerate(relevant_docs):
+        #logging.info(f"Relevant document {i+1}: {doc} \n")
 
     # Initialize the LLM
     llm = initialize_llm()
