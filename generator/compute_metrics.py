@@ -1,3 +1,6 @@
+import json
+import logging
+
 def compute_metrics(attributes, total_sentences):
     # Extract relevant information from attributes
     all_relevant_sentence_keys = attributes.get("all_relevant_sentence_keys", [])
@@ -8,17 +11,39 @@ def compute_metrics(attributes, total_sentences):
     context_relevance = len(all_relevant_sentence_keys) / total_sentences if total_sentences else 0
     
     # Compute Context Utilization
-    context_utilization = len(all_utilized_sentence_keys) / len(sentence_support_information) if sentence_support_information else 0
+    context_utilization = len(all_utilized_sentence_keys) / total_sentences if total_sentences else 0
     
-    # Compute Completeness
-    completeness = all(info.get("fully_supported", False) for info in sentence_support_information)
-    
+    # Compute Completeness score
+    Ri = set(all_relevant_sentence_keys)
+    Ui = set(all_utilized_sentence_keys)
+
+    completeness_score = len(Ri & Ui) / len(Ri) if len(Ri) else 0
+
     # Compute Adherence
-    adherence = attributes.get("overall_supported", False)
+    adherence = all(info.get("fully_supported", False) for info in sentence_support_information)
     
     return {
         "Context Relevance": context_relevance,
         "Context Utilization": context_utilization,
-        "Completeness": completeness,
+        "Completeness Score": completeness_score,
         "Adherence": adherence
     }
+
+def get_metrics(attributes, total_sentences):
+    if attributes.content:
+        result_content = attributes.content  # Access the content attribute
+        # Extract the JSON part from the result_content
+        json_start = result_content.find("{")
+        json_end = result_content.rfind("}") + 1
+        json_str = result_content[json_start:json_end]
+        
+        try:
+            result_json = json.loads(json_str)
+            print(json.dumps(result_json, indent=2))
+
+            # Compute metrics using the extracted attributes
+            metrics = compute_metrics(result_json, total_sentences)
+            print(metrics)
+            return metrics        
+        except json.JSONDecodeError as e:
+            logging.error(f"JSONDecodeError: {e}")

@@ -1,9 +1,9 @@
 from generator.create_prompt import create_prompt
-from generator.initialize_llm import initialize_llm
+from generator.initialize_llm import initialize_validation_llm
 from generator.document_utils import Document, apply_sentence_keys_documents, apply_sentence_keys_response
 
 # Initialize the LLM
-llm = initialize_llm()
+llm = initialize_validation_llm()
 
 # Function to extract attributes
 def extract_attributes(question, relevant_docs, response):
@@ -12,9 +12,16 @@ def extract_attributes(question, relevant_docs, response):
     formatted_documents = apply_sentence_keys_documents(relevant_docs)
     formatted_responses = apply_sentence_keys_response(response)
 
+    #print(f"Formatted documents : {formatted_documents}")
+    # Print the number of sentences in each document
+    for i, doc in enumerate(formatted_documents):
+        num_sentences = len(doc)
+        print(f"Document {i} has {num_sentences} sentences.")
+
     # Calculate the total number of sentences from formatted_documents
     total_sentences = sum(len(doc) for doc in formatted_documents)
-
+    print(f"Total number of sentences {total_sentences}")
+    
     attribute_prompt = create_prompt(formatted_documents, question, formatted_responses)
 
     # Instead of using BaseMessage, pass the formatted prompt directly to invoke

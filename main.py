@@ -1,12 +1,13 @@
-import logging, json
+import logging
 from data.load_dataset import load_data
+from generator import compute_rmse_auc_roc_metrics
 from retriever.chunk_documents import chunk_documents
 from retriever.embed_documents import embed_documents
 from retriever.retrieve_documents import retrieve_top_k_documents
 from generator.initialize_llm import initialize_llm
 from generator.generate_response import generate_response
 from generator.extract_attributes import extract_attributes
-from generator.compute_metrics import compute_metrics 
+from generator.compute_metrics import get_metrics 
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -27,7 +28,8 @@ def main():
     logging.info("Documents embedded")
     
     # Sample question
-    sample_question = dataset[0]['question']
+    row_num = 1
+    sample_question = dataset[row_num]['question']
     logging.info(f"Sample question: {sample_question}")
 
     # Retrieve relevant documents
@@ -52,23 +54,11 @@ def main():
     # Valuations : Extract attributes from the response and source documents
     attributes, total_sentences = extract_attributes(sample_question, source_docs, response)
     
-    # Only proceed if the content is not empty
-    if attributes.content:
-        result_content = attributes.content  # Access the content attribute
-        # Extract the JSON part from the result_content
-        json_start = result_content.find("{")
-        json_end = result_content.rfind("}") + 1
-        json_str = result_content[json_start:json_end]
-        
-        try:
-            result_json = json.loads(json_str)
-            print(json.dumps(result_json, indent=2))
-
-            # Compute metrics using the extracted attributes
-            metrics = compute_metrics(result_json, total_sentences)
-            print(metrics)
-        except json.JSONDecodeError as e:
-            logging.error(f"JSONDecodeError: {e}")
-
+    # Call the process_attributes method in the main block
+    metrics = get_metrics(attributes, total_sentences)
+    
+    #Compute RMSE and AUC-ROC for entire dataset
+    #compute_rmse_auc_roc_metrics(llm, dataset, vector_store)
+   
 if __name__ == "__main__":
     main()
