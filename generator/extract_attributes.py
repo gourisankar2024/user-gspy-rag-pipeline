@@ -14,13 +14,13 @@ def extract_attributes(question, relevant_docs, response):
 
     #print(f"Formatted documents : {formatted_documents}")
     # Print the number of sentences in each document
-    for i, doc in enumerate(formatted_documents):
+    '''for i, doc in enumerate(formatted_documents):
         num_sentences = len(doc)
-        print(f"Document {i} has {num_sentences} sentences.")
+        print(f"Document {i} has {num_sentences} sentences.")'''
 
     # Calculate the total number of sentences from formatted_documents
     total_sentences = sum(len(doc) for doc in formatted_documents)
-    print(f"Total number of sentences {total_sentences}")
+    #print(f"Total number of sentences {total_sentences}")
     
     attribute_prompt = create_prompt(formatted_documents, question, formatted_responses)
 

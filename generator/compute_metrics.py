@@ -20,7 +20,8 @@ def compute_metrics(attributes, total_sentences):
     completeness_score = len(Ri & Ui) / len(Ri) if len(Ri) else 0
 
     # Compute Adherence
-    adherence = all(info.get("fully_supported", False) for info in sentence_support_information)
+    #adherence = all(info.get("fully_supported", False) for info in sentence_support_information)
+    adherence = 1 if all(info.get("fully_supported", False) for info in sentence_support_information) else 0
     
     return {
         "Context Relevance": context_relevance,
@@ -39,7 +40,7 @@ def get_metrics(attributes, total_sentences):
         
         try:
             result_json = json.loads(json_str)
-            print(json.dumps(result_json, indent=2))
+            #print(json.dumps(result_json, indent=2))
 
             # Compute metrics using the extracted attributes
             metrics = compute_metrics(result_json, total_sentences)
