@@ -2,9 +2,6 @@ from generator.create_prompt import create_prompt
 from generator.initialize_llm import initialize_validation_llm
 from generator.document_utils import Document, apply_sentence_keys_documents, apply_sentence_keys_response
 
-# Initialize the LLM
-llm = initialize_validation_llm()
-
 # Function to extract attributes
 def extract_attributes(question, relevant_docs, response):
     # Format documents into a string by accessing the `page_content` attribute of each Document
@@ -24,7 +21,10 @@ def extract_attributes(question, relevant_docs, response):
     
     attribute_prompt = create_prompt(formatted_documents, question, formatted_responses)
 
+    # Initialize the LLM
+    llm_val = initialize_validation_llm()
+    
     # Instead of using BaseMessage, pass the formatted prompt directly to invoke
-    result = llm.invoke(attribute_prompt)
+    result = llm_val.invoke(attribute_prompt)
 
     return result, total_sentences
