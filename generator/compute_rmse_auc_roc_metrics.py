@@ -33,9 +33,9 @@ def compute_rmse_auc_roc_metrics(llm, dataset, vector_store, num_question):
         metrics = generate_metrics(llm, vector_store, query)
         
         # Extract predicted metrics (ensure these are continuous if possible)
-        predicted_relevance = metrics['Context Relevance']
-        predicted_utilization = metrics['Context Utilization']
-        predicted_adherence = metrics['Adherence']
+        predicted_relevance = metrics.get('Context Relevance', 0) if metrics else 0
+        predicted_utilization = metrics.get('Context Utilization', 0) if metrics else 0
+        predicted_adherence = metrics.get('Adherence', 0) if metrics else 0
         
         # === Handle Continuous Inputs for RMSE ===
         relevance_rmse = root_mean_squared_error([ground_truth_relevance], [predicted_relevance])
@@ -46,7 +46,7 @@ def compute_rmse_auc_roc_metrics(llm, dataset, vector_store, num_question):
         binary_ground_truth_relevance = 1 if ground_truth_relevance > 0.5 else 0
         #binary_predicted_relevance = 1 if predicted_relevance > 0.5 else 0
 
-        binary_ground_truth_utilization = 1 if ground_truth_utilization > 0.5 else 0
+        binary_ground_truth_utilization = 1 if ground_truth_utilization > 0.2 else 0
         #binary_predicted_utilization = 1 if predicted_utilization > 0.5 else 0
 
         #binary_ground_truth_adherence = 1 if ground_truth_adherence > 0.5 else 0
