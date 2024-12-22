@@ -32,6 +32,7 @@ def compute_metrics(attributes, total_sentences):
 
 def get_metrics(attributes, total_sentences):
     if attributes.content:
+        #print(attributes)
         result_content = attributes.content  # Access the content attribute
         # Extract the JSON part from the result_content
         json_start = result_content.find("{")
@@ -40,8 +41,6 @@ def get_metrics(attributes, total_sentences):
         
         try:
             result_json = json.loads(json_str)
-            #print(json.dumps(result_json, indent=2))
-
             # Compute metrics using the extracted attributes
             metrics = compute_metrics(result_json, total_sentences)
             print(metrics)
