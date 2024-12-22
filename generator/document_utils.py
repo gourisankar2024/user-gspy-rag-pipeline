@@ -7,7 +7,7 @@ class Document:
 
 def apply_sentence_keys_documents(relevant_docs: List[Document]):
     result = []
-    for i, doc in enumerate(relevant_docs):
+    '''for i, doc in enumerate(relevant_docs):
         doc_id = str(i)
         title_passage = doc.page_content.split('\nPassage: ')
         title = title_passage[0]
@@ -19,7 +19,13 @@ def apply_sentence_keys_documents(relevant_docs: List[Document]):
         for j, passage in enumerate(passages):
             doc_result.append([f"{doc_id}{chr(98 + j)}", passage])
         
-        result.append(doc_result)
+        result.append(doc_result)'''
+    
+    for relevant_doc_index, relevant_doc in enumerate(relevant_docs):
+        sentences = []
+        for sentence_index, sentence in enumerate(relevant_doc.page_content.split(".")):
+            sentences.append([str(relevant_doc_index)+chr(97 + sentence_index), sentence])
+        result.append(sentences)
     
     return result
 
