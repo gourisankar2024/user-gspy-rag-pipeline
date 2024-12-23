@@ -20,8 +20,8 @@ def compute_metrics(attributes, total_sentences):
     completeness_score = len(Ri & Ui) / len(Ri) if len(Ri) else 0
 
     # Compute Adherence
-    #adherence = all(info.get("fully_supported", False) for info in sentence_support_information)
-    adherence = 1 if all(info.get("fully_supported", False) for info in sentence_support_information) else 0
+    adherence = all(info.get("fully_supported", False) for info in sentence_support_information)
+    #adherence = 1 if all(info.get("fully_supported", False) for info in sentence_support_information) else 0
     
     return {
         "Context Relevance": context_relevance,
