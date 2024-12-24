@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def main():
     logging.info("Starting the RAG pipeline")
-    data_set_name = 'covidqa'
+    data_set_name = 'techqa'
 
     # Load the dataset
     dataset = load_data(data_set_name)
@@ -36,7 +36,7 @@ def main():
     val_llm = initialize_validation_llm()
 
     # Sample question
-    row_num = 10
+    row_num = 7
     query = dataset[row_num]['question']
 
     # Call generate_metrics for above sample question
