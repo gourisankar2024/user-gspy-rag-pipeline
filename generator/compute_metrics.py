@@ -43,7 +43,7 @@ def get_metrics(attributes, total_sentences):
             result_json = json.loads(json_str)
             # Compute metrics using the extracted attributes
             metrics = compute_metrics(result_json, total_sentences)
-            print(metrics)
+            logging.info(metrics)
             return metrics        
         except json.JSONDecodeError as e:
             logging.error(f"JSONDecodeError: {e}")
