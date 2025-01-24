@@ -5,7 +5,7 @@ from retriever.retrieve_documents import retrieve_top_k_documents
 from generator.compute_metrics import get_metrics
 from generator.extract_attributes import extract_attributes
 
-def generate_metrics(gen_llm, val_llm, vector_store, query):
+def generate_metrics(gen_llm, val_llm, vector_store, query, time_to_wait):
     logging.info(f'Query: {query}')
     
     # Step 1: Retrieve relevant documents for given query
@@ -22,7 +22,7 @@ def generate_metrics(gen_llm, val_llm, vector_store, query):
     logging.info(f"Response from LLM: {response}")
 
     # Add a sleep interval to avoid hitting the rate limit
-    time.sleep(25)  # Adjust the sleep time as needed
+    time.sleep(time_to_wait)  # Adjust the sleep time as needed
     
     # Step 3: Extract attributes and total sentences for each query
     logging.info(f"Extracting attributes through validation LLM")
@@ -32,4 +32,4 @@ def generate_metrics(gen_llm, val_llm, vector_store, query):
     # Step 4 : Call the get metrics calculate metrics
     metrics = get_metrics(attributes, total_sentences)
 
-    return metrics
+    return response, metrics

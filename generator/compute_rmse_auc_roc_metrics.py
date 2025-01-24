@@ -25,7 +25,7 @@ def compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, num_qu
         query = document['question']
         logging.info(f'Query number: {i + 1}')
         # Call the generate_metrics for each query
-        metrics = generate_metrics(gen_llm, val_llm, vector_store, query)
+        response, metrics = generate_metrics(gen_llm, val_llm, vector_store, query, 15)
         
         # Extract predicted metrics (ensure these are continuous if possible)
         predicted_relevance = metrics.get('Context Relevance', 0) if metrics else 0
@@ -69,3 +69,5 @@ def compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, num_qu
     logging.info(f"Relevance RMSE score: {relevance_rmse}")
     logging.info(f"Utilization RMSE score: {utilization_rmse}")
     logging.info(f"Overall Adherence AUC-ROC: {adherence_auc}")
+
+    return relevance_rmse, utilization_rmse, adherence_auc

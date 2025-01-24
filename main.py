@@ -6,6 +6,7 @@ from retriever.embed_documents import embed_documents
 from generator.generate_metrics import generate_metrics
 from generator.initialize_llm import initialize_generation_llm
 from generator.initialize_llm import initialize_validation_llm
+from app import launch_gradio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -36,15 +37,18 @@ def main():
     val_llm = initialize_validation_llm()
 
     # Sample question
-    row_num = 2
-    query = dataset[row_num]['question']
+    #row_num = 30
+    #query = dataset[row_num]['question']
 
     # Call generate_metrics for above sample question
     #generate_metrics(gen_llm, val_llm, vector_store, query)
     
     #Compute RMSE and AUC-ROC for entire dataset
-    compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, 10)
+    #compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, 10)
     
+    # Launch the Gradio app
+    launch_gradio(vector_store, dataset, gen_llm, val_llm)
+
     logging.info("Finished!!!")
 
 if __name__ == "__main__":
