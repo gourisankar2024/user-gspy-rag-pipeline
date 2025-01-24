@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def main():
     logging.info("Starting the RAG pipeline")
-    data_set_name = 'techqa'
+    data_set_name = 'covidqa'
 
     # Load the dataset
     dataset = load_data(data_set_name)
@@ -36,11 +36,11 @@ def main():
     val_llm = initialize_validation_llm()
 
     # Sample question
-    row_num = 7
+    row_num = 2
     query = dataset[row_num]['question']
 
     # Call generate_metrics for above sample question
-    generate_metrics(gen_llm, val_llm, vector_store, query)
+    #generate_metrics(gen_llm, val_llm, vector_store, query)
     
     #Compute RMSE and AUC-ROC for entire dataset
     compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, 10)
