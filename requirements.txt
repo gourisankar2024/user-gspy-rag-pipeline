@@ -8,3 +8,4 @@ llama-index
 langchain-community
 langchain_groq
 langchain-huggingface
+gradio
