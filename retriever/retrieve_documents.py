@@ -1,13 +1,19 @@
+import logging
 import numpy as np
 from transformers import pipeline
 
+from config import ConfigConstants
+
 def retrieve_top_k_documents(vector_store, query, top_k=5):
     documents = vector_store.similarity_search(query, k=top_k)
+    logging.info(f"Top {top_k} documents reterived for query")
+
     documents = rerank_documents(query, documents)
+    
     return documents 
 
 # Reranking: Cross-Encoder for refining top-k results
-def rerank_documents(query, documents, reranker_model_name="cross-encoder/ms-marco-electra-base"):
+def rerank_documents(query, documents):
     """
     Re-rank documents using a cross-encoder model.
 
@@ -20,7 +26,7 @@ def rerank_documents(query, documents, reranker_model_name="cross-encoder/ms-mar
         list: Re-ranked list of Document objects with updated scores.
     """
     # Initialize the cross-encoder model
-    reranker = pipeline("text-classification", model=reranker_model_name, return_all_scores=False)
+    reranker = pipeline("text-classification", model=ConfigConstants.RE_RANKER_MODEL_NAME, top_k=1)
 
     # Pair the query with each document's text
     rerank_inputs = [{"text": query, "text_pair": doc.page_content} for doc in documents]
@@ -28,12 +34,14 @@ def rerank_documents(query, documents, reranker_model_name="cross-encoder/ms-mar
     # Get relevance scores for each query-document pair
     scores = reranker(rerank_inputs)
 
-    # Attach the new scores to the documents
+   # Attach the new scores to the documents
     for doc, score in zip(documents, scores):
-        doc.metadata["rerank_score"] = score["score"]  # Add score to document metadata
+        doc.metadata["rerank_score"] = score[0]['score']  # Access score from the first item in the list
 
     # Sort documents by the rerank_score in descending order
     documents = sorted(documents, key=lambda x: x.metadata.get("rerank_score", 0), reverse=True)
+    logging.info("Re-ranked documents using a cross-encoder model")
+
     return documents
 
 

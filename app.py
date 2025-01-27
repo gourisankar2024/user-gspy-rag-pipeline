@@ -4,9 +4,9 @@ import threading
 import time
 from generator.compute_metrics import get_attributes_text
 from generator.generate_metrics import generate_metrics, retrieve_and_generate_response
-from io import StringIO
+from config import AppConfig, ConfigConstants 
 
-def launch_gradio(vector_store, gen_llm, val_llm):
+def launch_gradio(config : AppConfig):
     """
     Launch the Gradio app with pre-initialized objects.
     """
@@ -43,7 +43,7 @@ def launch_gradio(vector_store, gen_llm, val_llm):
     def answer_question(query, state):
         try:
             # Generate response using the passed objects
-            response, source_docs = retrieve_and_generate_response(gen_llm, vector_store, query)
+            response, source_docs = retrieve_and_generate_response(config.gen_llm, config.vector_store, query)
             
             # Update state with the response and source documents
             state["query"] = query
@@ -66,7 +66,7 @@ def launch_gradio(vector_store, gen_llm, val_llm):
             query = state.get("query", "")
 
             # Generate metrics using the passed objects
-            attributes, metrics = generate_metrics(val_llm, response, source_docs, query, 1)
+            attributes, metrics = generate_metrics(config.val_llm, response, source_docs, query, 1)
             
             attributes_text = get_attributes_text(attributes)
 
@@ -87,8 +87,9 @@ def launch_gradio(vector_store, gen_llm, val_llm):
         
         # Section to display LLM names
         with gr.Row():
-            model_info = f"Generation LLM: {gen_llm.name if hasattr(gen_llm, 'name') else 'Unknown'}\n"
-            model_info += f"Validation LLM: {val_llm.name if hasattr(val_llm, 'name') else 'Unknown'}\n"
+            model_info = f"Embedding Model: {ConfigConstants.EMBEDDING_MODEL_NAME}\n"
+            model_info += f"Generation LLM: {config.gen_llm.name if hasattr(config.gen_llm, 'name') else 'Unknown'}\n"
+            model_info += f"Validation LLM: {config.val_llm.name if hasattr(config.val_llm, 'name') else 'Unknown'}\n"
             gr.Textbox(value=model_info, label="Model Information", interactive=False)  # Read-only textbox
 
         # State to store response and source documents

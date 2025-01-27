@@ -1,4 +1,5 @@
 import logging
+from config import AppConfig, ConfigConstants
 from data.load_dataset import load_data
 from generator.compute_rmse_auc_roc_metrics import compute_rmse_auc_roc_metrics
 from retriever.chunk_documents import chunk_documents
@@ -12,32 +13,23 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def main():
     logging.info("Starting the RAG pipeline")
-    
-
-    # Load single dataset
-    #dataset = load_data(data_set_name)
-    #logging.info("Dataset loaded")
-    # List of datasets to load
-    data_set_names = ['covidqa', 'techqa', 'cuad']
-
-    default_chunk_size = 1000
-    chunk_overlap = 200
 
     # Dictionary to store chunked documents
     all_chunked_documents = []
-    # Load multiple datasets
     datasets = {}
-    for data_set_name in data_set_names:
+
+    # Load multiple datasets
+    for data_set_name in ConfigConstants.DATA_SET_NAMES:
         logging.info(f"Loading dataset: {data_set_name}")
         datasets[data_set_name] = load_data(data_set_name)
 
         # Set chunk size based on dataset name
-        chunk_size = default_chunk_size
+        chunk_size = ConfigConstants.DEFAULT_CHUNK_SIZE
         if data_set_name == 'cuad':
             chunk_size = 4000  # Custom chunk size for 'cuad'
         
         # Chunk documents
-        chunked_documents = chunk_documents(datasets[data_set_name], chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        chunked_documents = chunk_documents(datasets[data_set_name], chunk_size=chunk_size, chunk_overlap=ConfigConstants.CHUNK_OVERLAP)
         all_chunked_documents.extend(chunked_documents)  # Combine all chunks
 
     # Access individual datasets
@@ -58,11 +50,13 @@ def main():
     val_llm = initialize_validation_llm()
 
     #Compute RMSE and AUC-ROC for entire dataset
-    data_set_name = 'covidqa'
+    #Enable below code for calculation
+    #data_set_name = 'covidqa'
     #compute_rmse_auc_roc_metrics(gen_llm, val_llm, datasets[data_set_name], vector_store, 10)
     
     # Launch the Gradio app
-    launch_gradio(vector_store, gen_llm, val_llm)
+    config = AppConfig(vector_store= vector_store, gen_llm= gen_llm, val_llm= val_llm)
+    launch_gradio(config)
 
     logging.info("Finished!!!")
 
