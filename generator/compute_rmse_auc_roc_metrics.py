@@ -1,6 +1,6 @@
 
 from sklearn.metrics import roc_auc_score, root_mean_squared_error
-from generator.generate_metrics import generate_metrics
+from generator.generate_metrics import generate_metrics, retrieve_and_generate_response
 import logging
 
 def compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, num_question):
@@ -25,7 +25,8 @@ def compute_rmse_auc_roc_metrics(gen_llm, val_llm, dataset, vector_store, num_qu
         query = document['question']
         logging.info(f'Query number: {i + 1}')
         # Call the generate_metrics for each query
-        response, metrics = generate_metrics(gen_llm, val_llm, vector_store, query, 15)
+        response, source_docs = retrieve_and_generate_response(gen_llm, vector_store, query)
+        attributes, metrics = generate_metrics(val_llm, response, source_docs, query, 25)
         
         # Extract predicted metrics (ensure these are continuous if possible)
         predicted_relevance = metrics.get('Context Relevance', 0) if metrics else 0
