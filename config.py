@@ -1,7 +1,7 @@
 
 class ConfigConstants:
     # Constants related to datasets and models
-    DATA_SET_NAMES = ['covidqa', 'techqa', 'cuad']
+    DATA_SET_NAMES = ['covidqa', 'cuad', 'delucionqa', 'emanual', 'expertqa', 'finqa', 'hagrid', 'hotpotqa', 'msmarco', 'pubmedqa', 'tatqa', 'techqa']
     EMBEDDING_MODEL_NAME = "sentence-transformers/paraphrase-MiniLM-L3-v2"
     RE_RANKER_MODEL_NAME = 'cross-encoder/ms-marco-electra-base'
     DEFAULT_CHUNK_SIZE = 1000
