@@ -2,9 +2,11 @@ import logging
 import os
 from langchain_groq import ChatGroq
 
+from config import ConfigConstants
+
 def initialize_generation_llm():
     os.environ["GROQ_API_KEY"] = "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"
-    model_name = "mixtral-8x7b-32768"
+    model_name = ConfigConstants.GENERATION_MODEL_NAME
     llm = ChatGroq(model=model_name, temperature=0.7)
     llm.name = model_name
     logging.info(f'Generation LLM {model_name} initialized')
@@ -12,7 +14,7 @@ def initialize_generation_llm():
 
 def initialize_validation_llm():
     os.environ["GROQ_API_KEY"] = "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"
-    model_name = "llama3-70b-8192"
+    model_name = ConfigConstants.VALIDATION_MODEL_NAME
     llm = ChatGroq(model=model_name, temperature=0.7)
     llm.name = model_name
     logging.info(f'Validation LLM {model_name} initialized')
