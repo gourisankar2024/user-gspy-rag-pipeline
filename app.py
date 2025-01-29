@@ -4,7 +4,8 @@ import threading
 import time
 from generator.compute_metrics import get_attributes_text
 from generator.generate_metrics import generate_metrics, retrieve_and_generate_response
-from config import AppConfig, ConfigConstants 
+from config import AppConfig, ConfigConstants
+from generator.initialize_llm import initialize_generation_llm, initialize_validation_llm 
 
 def launch_gradio(config : AppConfig):
     """
@@ -80,17 +81,50 @@ def launch_gradio(config : AppConfig):
             logging.error(f"Error computing metrics: {e}")
             return f"An error occurred: {e}", ""
 
+    def reinitialize_gen_llm(gen_llm_name):
+        """Reinitialize the generation LLM and return updated model info."""
+        if gen_llm_name.strip():  # Only update if input is not empty
+            config.gen_llm = initialize_generation_llm(gen_llm_name)
+        
+        # Return updated model information
+        updated_model_info = (
+            f"Embedding Model: {ConfigConstants.EMBEDDING_MODEL_NAME}\n"
+            f"Generation LLM: {config.gen_llm.name if hasattr(config.gen_llm, 'name') else 'Unknown'}\n"
+            f"Validation LLM: {config.val_llm.name if hasattr(config.val_llm, 'name') else 'Unknown'}\n"
+        )
+        return updated_model_info
+
+    def reinitialize_val_llm(val_llm_name):
+        """Reinitialize the generation LLM and return updated model info."""
+        if val_llm_name.strip():  # Only update if input is not empty
+            config.val_llm = initialize_validation_llm(val_llm_name)
+        
+        # Return updated model information
+        updated_model_info = (
+            f"Embedding Model: {ConfigConstants.EMBEDDING_MODEL_NAME}\n"
+            f"Generation LLM: {config.gen_llm.name if hasattr(config.gen_llm, 'name') else 'Unknown'}\n"
+            f"Validation LLM: {config.val_llm.name if hasattr(config.val_llm, 'name') else 'Unknown'}\n"
+        )
+        return updated_model_info
+    
     # Define Gradio Blocks layout
     with gr.Blocks() as interface:
         interface.title = "Real Time RAG Pipeline Q&A"
         gr.Markdown("### Real Time RAG Pipeline Q&A")  # Heading
         
+        # Textbox for new generation LLM name
+        with gr.Row():
+            new_gen_llm_input = gr.Textbox(label="New Generation LLM Name", placeholder="Enter LLM name to update")
+            update_gen_llm_button = gr.Button("Update Generation LLM")
+            new_val_llm_input = gr.Textbox(label="New Validation LLM Name", placeholder="Enter LLM name to update")
+            update_val_llm_button = gr.Button("Update Validation LLM")
+
         # Section to display LLM names
         with gr.Row():
             model_info = f"Embedding Model: {ConfigConstants.EMBEDDING_MODEL_NAME}\n"
             model_info += f"Generation LLM: {config.gen_llm.name if hasattr(config.gen_llm, 'name') else 'Unknown'}\n"
             model_info += f"Validation LLM: {config.val_llm.name if hasattr(config.val_llm, 'name') else 'Unknown'}\n"
-            gr.Textbox(value=model_info, label="Model Information", interactive=False)  # Read-only textbox
+            model_info_display = gr.Textbox(value=model_info, label="Model Information", interactive=False)  # Read-only textbox
 
         # State to store response and source documents
         state = gr.State(value={"query": "","response": "", "source_docs": {}})
@@ -122,7 +156,19 @@ def launch_gradio(config : AppConfig):
             inputs=[state],
             outputs=[attr_output, metrics_output]
         )
+        
+        update_gen_llm_button.click(
+            fn=reinitialize_gen_llm,
+            inputs=[new_gen_llm_input],
+            outputs=[model_info_display]  # Update the displayed model info
+        )
 
+        update_val_llm_button.click(
+            fn=reinitialize_val_llm,
+            inputs=[new_val_llm_input],
+            outputs=[model_info_display]  # Update the displayed model info
+        )
+        
         # Section to display logs
         with gr.Row():
             start_log_button = gr.Button("Start Log Update", elem_id="start_btn")  # Button to start log updates

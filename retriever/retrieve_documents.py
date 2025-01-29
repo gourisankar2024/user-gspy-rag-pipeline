@@ -8,7 +8,7 @@ def retrieve_top_k_documents(vector_store, query, top_k=5):
     documents = vector_store.similarity_search(query, k=top_k)
     logging.info(f"Top {top_k} documents reterived for query")
 
-    documents = rerank_documents(query, documents)
+    #documents = rerank_documents(query, documents)
     
     return documents 
 

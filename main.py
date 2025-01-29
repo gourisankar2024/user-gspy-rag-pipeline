@@ -44,10 +44,10 @@ def main():
     logging.info("Documents embedded")
     
      # Initialize the Generation LLM
-    gen_llm = initialize_generation_llm()
+    gen_llm = initialize_generation_llm(ConfigConstants.GENERATION_MODEL_NAME)
 
     # Initialize the Validation LLM
-    val_llm = initialize_validation_llm()
+    val_llm = initialize_validation_llm(ConfigConstants.VALIDATION_MODEL_NAME)
 
     #Compute RMSE and AUC-ROC for entire dataset
     #Enable below code for calculation
@@ -55,7 +55,7 @@ def main():
     #compute_rmse_auc_roc_metrics(gen_llm, val_llm, datasets[data_set_name], vector_store, 10)
     
     # Launch the Gradio app
-    config = AppConfig(vector_store= vector_store, gen_llm= gen_llm, val_llm= val_llm)
+    config = AppConfig(vector_store= vector_store, gen_llm = gen_llm, val_llm = val_llm)
     launch_gradio(config)
 
     logging.info("Finished!!!")
