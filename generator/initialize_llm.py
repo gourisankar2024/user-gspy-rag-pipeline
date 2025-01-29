@@ -3,7 +3,7 @@ import os
 from langchain_groq import ChatGroq
 
 def initialize_generation_llm(input_model_name):
-    os.environ["GROQ_API_KEY"] = ""
+    os.environ["GROQ_API_KEY"] = "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"
     
     model_name = input_model_name    
     llm = ChatGroq(model=model_name, temperature=0.7)
@@ -13,7 +13,7 @@ def initialize_generation_llm(input_model_name):
     return llm
 
 def initialize_validation_llm(input_model_name):
-    os.environ["GROQ_API_KEY"] = ""
+    os.environ["GROQ_API_KEY"] = "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"
     
     model_name = input_model_name      
     llm = ChatGroq(model=model_name, temperature=0.7)

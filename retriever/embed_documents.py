@@ -1,4 +1,4 @@
-import os
+'''import os
 import logging
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -16,9 +16,9 @@ def embed_documents(documents, embedding_path="embeddings.faiss"):
         vector_store = FAISS.from_texts([doc['text'] for doc in documents], embedding_model)
         vector_store.save_local(embedding_path)
     
-    return vector_store
+    return vector_store'''
 
-'''import os
+import os
 import logging
 import hashlib
 from typing import List, Dict
@@ -91,6 +91,6 @@ def _save_metadata(metadata_path: str, metadata: Dict[str, bool]):
     """Save metadata to a file."""
     import json
     with open(metadata_path, "w") as f:
-        json.dump(metadata, f)'''
+        json.dump(metadata, f)
 
 
