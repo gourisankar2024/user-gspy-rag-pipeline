@@ -178,4 +178,4 @@ def launch_gradio(config : AppConfig):
         # Set button click to trigger log updates
         start_log_button.click(fn=get_logs, outputs=log_section)
 
-    interface.launch()
+    interface.launch(share=True, debug=True)
